@@ -276,6 +276,7 @@ function compareScenarios() {
         { key: 'firstYearCashFlow', label: '初年度キャッシュフロー', format: 'currency' },
         { key: 'finalCumulativeProfit', label: '最終累積純利益', format: 'currency' },
         { key: 'finalCumulativeCashFlow', label: '最終累積C/F', format: 'currency' },
+        { key: 'paybackYears', label: '回収年数 (2年目C/Fベース)', format: 'years' },
         { key: 'fiveYearPayback', label: '5年間回収額', format: 'currency' },
         { key: 'fiveYearPaybackAchieved', label: '5年回収達成', format: 'boolean' }
     ];
@@ -292,6 +293,8 @@ function compareScenarios() {
                 formatted = formatCurrency(value) + ' 円';
             } else if (metric.format === 'boolean') {
                 formatted = value ? '✓ 達成' : '✗ 未達成';
+            } else if (metric.format === 'years') {
+                formatted = (value > 0 && isFinite(value)) ? value.toFixed(1) + ' 年' : '—';
             } else {
                 formatted = value;
             }
