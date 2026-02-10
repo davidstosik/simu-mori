@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>不動産投資シミュレーター</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>不動産投資シミュレーター</h1>
+            <p class="subtitle">Real Estate Investment Simulator</p>
+        </header>
+
+        <div class="scenario-controls">
+            <div class="scenario-header">
+                <input type="text" id="scenarioName" placeholder="シナリオ名" value="デフォルトシナリオ">
+                <div class="scenario-buttons">
+                    <button onclick="saveScenario()" class="btn-primary">保存</button>
+                    <button onclick="loadScenarioModal()" class="btn-secondary">読込</button>
+                    <button onclick="newScenario()" class="btn-secondary">新規</button>
+                    <button onclick="compareScenarios()" class="btn-secondary">比較</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <!-- 物件価格 -->
+            <section class="input-section">
+                <h2>物件価格 (Property Purchase)</h2>
+                <div class="input-group">
+                    <label for="propertyPrice">物件価格 (Property Price)</label>
+                    <input type="number" id="propertyPrice" value="30000000" step="100000">
+                    <span class="unit">円</span>
+                </div>
+                <div class="input-group">
+                    <label for="initialRenovation">初期リフォーム費用 (Initial Renovation)</label>
+                    <input type="number" id="initialRenovation" value="500000" step="10000">
+                    <span class="unit">円</span>
+                </div>
+                <div class="input-group">
+                    <label for="closingCosts">購入時諸費用合計 (Closing Costs)</label>
+                    <input type="number" id="closingCosts" value="900000" step="10000">
+                    <span class="unit">円</span>
+                </div>
+            </section>
+
+            <!-- 借入条件 -->
+            <section class="input-section">
+                <h2>借入条件 (Loan Conditions)</h2>
+                <div class="input-group">
+                    <label for="loanAmount">借入額 (Loan Amount)</label>
+                    <input type="number" id="loanAmount" value="24000000" step="100000">
+                    <span class="unit">円</span>
+                </div>
+                <div class="input-group">
+                    <label for="interestRate">金利 (Interest Rate)</label>
+                    <input type="number" id="interestRate" value="2.5" step="0.1">
+                    <span class="unit">%</span>
+                </div>
+                <div class="input-group">
+                    <label for="loanPeriod">借入期間 (Loan Period)</label>
+                    <input type="number" id="loanPeriod" value="25" step="1">
+                    <span class="unit">年</span>
+                </div>
+                <div class="input-group">
+                    <label for="repaymentMethod">返済方法 (Repayment Method)</label>
+                    <select id="repaymentMethod">
+                        <option value="equal-payment">元利均等返済 (Equal Payment)</option>
+                        <option value="equal-principal">元金均等返済 (Equal Principal)</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- 収入条件 -->
+            <section class="input-section">
+                <h2>収入条件 (Income Conditions)</h2>
+                <div class="input-group">
+                    <label for="annualRent">年間満室賃料合計 (Annual Full Occupancy Rent)</label>
+                    <input type="number" id="annualRent" value="2400000" step="10000">
+                    <span class="unit">円</span>
+                </div>
+                <div class="input-group">
+                    <label for="otherIncome">年間その他収入 (Annual Other Income)</label>
+                    <input type="number" id="otherIncome" value="0" step="1000">
+                    <span class="unit">円</span>
+                </div>
+                <div class="input-group">
+                    <label for="occupancyRate">平均入居率 (Average Occupancy Rate)</label>
+                    <input type="number" id="occupancyRate" value="95" step="1" min="0" max="100">
+                    <span class="unit">%</span>
+                </div>
+                <div class="input-group">
+                    <label for="rentDeclineRate">年間家賃下落率 (Annual Rent Decline Rate)</label>
+                    <input type="number" id="rentDeclineRate" value="0.5" step="0.1">
+                    <span class="unit">%</span>
+                </div>
+            </section>
+
+            <!-- 費用条件 -->
+            <section class="input-section">
+                <h2>費用条件 (Expense Conditions)</h2>
+                <div class="input-group">
+                    <label for="managementFees">管理費用 (Management Fees)</label>
+                    <input type="number" id="managementFees" value="120000" step="1000">
+                    <span class="unit">円/年</span>
+                </div>
+                <div class="input-group">
+                    <label for="repairAdvertising">修繕費・広告費等 (Repair & Advertising)</label>
+                    <input type="number" id="repairAdvertising" value="100000" step="1000">
+                    <span class="unit">円/年</span>
+                </div>
+                <div class="input-group">
+                    <label for="runningCosts">月額ランニング費用合計 (Monthly Running Costs)</label>
+                    <input type="number" id="runningCosts" value="15000" step="1000">
+                    <span class="unit">円/月</span>
+                </div>
+                <div class="input-group">
+                    <label for="insurance">年間火災・地震保険料 (Annual Insurance)</label>
+                    <input type="number" id="insurance" value="30000" step="1000">
+                    <span class="unit">円/年</span>
+                </div>
+            </section>
+
+            <!-- 減価償却条件 -->
+            <section class="input-section">
+                <h2>減価償却条件 (Depreciation Conditions)</h2>
+                <div class="input-group">
+                    <label for="buildingDepreciationBase">建物償却価格 (Building Depreciation Base)</label>
+                    <input type="number" id="buildingDepreciationBase" value="20000000" step="100000">
+                    <span class="unit">円</span>
+                </div>
+                <div class="input-group">
+                    <label for="depreciationPeriod">償却年数 (Depreciation Period)</label>
+                    <input type="number" id="depreciationPeriod" value="22" step="1">
+                    <span class="unit">年</span>
+                </div>
+            </section>
+
+            <!-- 税金条件 -->
+            <section class="input-section">
+                <h2>税金条件 (Tax Conditions)</h2>
+                <div class="input-group">
+                    <label for="landValue">土地の評価額 (Land Assessed Value)</label>
+                    <input type="number" id="landValue" value="10000000" step="100000">
+                    <span class="unit">円</span>
+                </div>
+                <div class="input-group">
+                    <label for="buildingValue">建物の評価額 (Building Assessed Value)</label>
+                    <input type="number" id="buildingValue" value="18000000" step="100000">
+                    <span class="unit">円</span>
+                </div>
+                <div class="input-group">
+                    <label for="taxRate">所得・法人税実効税率 (Effective Tax Rate)</label>
+                    <input type="number" id="taxRate" value="20" step="1" min="0" max="100">
+                    <span class="unit">%</span>
+                </div>
+                <div class="input-group">
+                    <label for="incomeDeduction">所得控除 (Income Deductions)</label>
+                    <input type="number" id="incomeDeduction" value="0" step="10000">
+                    <span class="unit">円/年</span>
+                </div>
+            </section>
+
+            <!-- シミュレーション設定 -->
+            <section class="input-section">
+                <h2>シミュレーション設定 (Simulation Settings)</h2>
+                <div class="input-group">
+                    <label for="projectionYears">予測年数 (Projection Years)</label>
+                    <input type="number" id="projectionYears" value="10" step="1" min="1" max="50">
+                    <span class="unit">年</span>
+                </div>
+            </section>
+
+            <div class="calculate-button">
+                <button onclick="calculate()" class="btn-calculate">計算実行 (Calculate)</button>
+            </div>
+        </div>
+
+        <div id="results" class="results-container" style="display: none;">
+            <div class="results-header">
+                <h2>計算結果 (Results)</h2>
+                <div class="export-buttons">
+                    <button onclick="exportToCSV('income')" class="btn-export">損益計算書をCSVで出力</button>
+                    <button onclick="exportToCSV('cashflow')" class="btn-export">キャッシュフロー計算書をCSVで出力</button>
+                    <button onclick="exportToCSV('all')" class="btn-export">全データをCSVで出力</button>
+                </div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div id="keyMetrics" class="metrics-container"></div>
+
+            <!-- 5-Year Payback Analysis -->
+            <div id="paybackAnalysis" class="payback-container"></div>
+
+            <!-- Income Statement Table -->
+            <div class="table-container">
+                <h3>損益計算書 (Income Statement)</h3>
+                <div class="table-wrapper">
+                    <table id="incomeTable" class="results-table"></table>
+                </div>
+            </div>
+
+            <!-- Cash Flow Table -->
+            <div class="table-container">
+                <h3>キャッシュフロー計算書 (Cash Flow Statement)</h3>
+                <div class="table-wrapper">
+                    <table id="cashflowTable" class="results-table"></table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Modal -->
+        <div id="compareModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeCompareModal()">&times;</span>
+                <h2>シナリオ比較 (Scenario Comparison)</h2>
+                <div id="compareContent"></div>
+            </div>
+        </div>
+
+        <!-- Load Scenario Modal -->
+        <div id="loadModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeLoadModal()">&times;</span>
+                <h2>シナリオ読込 (Load Scenario)</h2>
+                <div id="scenarioList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="calculator.js"></script>
+    <script src="scenarios.js"></script>
+    <script src="ui.js"></script>
+</body>
+</html>
