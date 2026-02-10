@@ -328,10 +328,12 @@ window.addEventListener('DOMContentLoaded', function() {
         if (scenario) {
             document.getElementById('scenarioName').value = scenario.name;
             setInputValues(scenario.inputs);
+            calculateDepreciation(); // Ensure depreciation is calculated
             return;
         }
     }
     
     // Otherwise load example
     loadExampleScenario();
+    calculateDepreciation(); // Ensure depreciation is calculated
 });
