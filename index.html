@@ -148,14 +148,19 @@
                 </div>
                 <div class="input-group">
                     <label for="depreciationPeriod">残存償却年数 (Remaining Depreciation Period)</label>
-                    <input type="number" id="depreciationPeriod" value="12" step="1" readonly style="background: #e9ecef;">
+                    <input type="number" id="depreciationPeriod" value="14" step="1" readonly style="background: #e9ecef;">
                     <span class="unit">年</span>
                 </div>
                 <div class="input-group">
                     <label for="buildingDepreciationBase">年間減価償却費 (Annual Depreciation)</label>
-                    <input type="number" id="buildingDepreciationBase" value="20000000" step="100000" readonly style="background: #e9ecef;">
+                    <input type="number" id="buildingDepreciationBase" value="1428571" step="100000" readonly style="background: #e9ecef;">
                     <span class="unit">円</span>
                 </div>
+                <p style="font-size: 0.85em; color: #6c757d; margin-top: 10px; line-height: 1.4;">
+                    ※中古物件の耐用年数計算：<br>
+                    築年数≧法定耐用年数の場合: 法定耐用年数×20%<br>
+                    築年数&lt;法定耐用年数の場合: 法定耐用年数-築年数+(築年数×20%)
+                </p>
             </section>
 
             <!-- 税金条件 -->

@@ -324,16 +324,29 @@ function formatPercent(value, decimals = 2) {
 
 /**
  * Calculate depreciation period and amount based on building age and type
+ * Japanese tax law for used properties (中古物件):
+ * - If age >= standard period: Remaining = Standard × 20%
+ * - If age < standard period: Remaining = Standard - Age + (Age × 20%)
  */
 function calculateDepreciation() {
     const buildingAge = parseInt(document.getElementById('buildingAge').value) || 0;
     const standardPeriod = parseInt(document.getElementById('buildingType').value) || 22;
     const assessedValue = parseFloat(document.getElementById('buildingAssessedValue').value) || 0;
     
-    // Remaining depreciation period = Standard period - Building age
-    const remainingPeriod = Math.max(0, standardPeriod - buildingAge);
+    let remainingPeriod;
     
-    // Annual depreciation = Assessed value / Remaining period (if period > 0)
+    if (buildingAge >= standardPeriod) {
+        // 法定耐用年数を超過した中古物件
+        remainingPeriod = Math.floor(standardPeriod * 0.2);
+    } else {
+        // 法定耐用年数を経過していない中古物件
+        remainingPeriod = Math.floor(standardPeriod - buildingAge + (buildingAge * 0.2));
+    }
+    
+    // Ensure at least 2 years (Japanese tax minimum)
+    remainingPeriod = Math.max(2, remainingPeriod);
+    
+    // Annual depreciation = Assessed value / Remaining period
     const annualDepreciation = remainingPeriod > 0 ? assessedValue / remainingPeriod : 0;
     
     // Update readonly fields
