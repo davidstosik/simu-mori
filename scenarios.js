@@ -20,7 +20,11 @@ function getInputValues() {
         otherIncome: parseFloat(document.getElementById('otherIncome').value),
         occupancyRate: parseFloat(document.getElementById('occupancyRate').value),
         rentDeclineRate: parseFloat(document.getElementById('rentDeclineRate').value),
+        managementFeesType: document.getElementById('managementFeesType').value,
+        managementFeesPercent: parseFloat(document.getElementById('managementFeesPercent').value),
         managementFees: parseFloat(document.getElementById('managementFees').value),
+        repairAdvertisingType: document.getElementById('repairAdvertisingType').value,
+        repairAdvertisingPercent: parseFloat(document.getElementById('repairAdvertisingPercent').value),
         repairAdvertising: parseFloat(document.getElementById('repairAdvertising').value),
         runningCosts: parseFloat(document.getElementById('runningCosts').value),
         insurance: parseFloat(document.getElementById('insurance').value),
@@ -53,8 +57,23 @@ function setInputValues(values) {
     document.getElementById('otherIncome').value = values.otherIncome;
     document.getElementById('occupancyRate').value = values.occupancyRate;
     document.getElementById('rentDeclineRate').value = values.rentDeclineRate;
-    document.getElementById('managementFees').value = values.managementFees;
-    document.getElementById('repairAdvertising').value = values.repairAdvertising;
+    if (values.managementFeesType !== undefined) {
+        document.getElementById('managementFeesType').value = values.managementFeesType;
+        toggleExpenseType('management');
+    }
+    if (values.managementFeesPercent !== undefined) {
+        document.getElementById('managementFeesPercent').value = values.managementFeesPercent;
+    }
+    document.getElementById('managementFees').value = values.managementFees || 120000;
+    
+    if (values.repairAdvertisingType !== undefined) {
+        document.getElementById('repairAdvertisingType').value = values.repairAdvertisingType;
+        toggleExpenseType('repair');
+    }
+    if (values.repairAdvertisingPercent !== undefined) {
+        document.getElementById('repairAdvertisingPercent').value = values.repairAdvertisingPercent;
+    }
+    document.getElementById('repairAdvertising').value = values.repairAdvertising || 100000;
     document.getElementById('runningCosts').value = values.runningCosts;
     document.getElementById('insurance').value = values.insurance;
     if (values.buildingAge !== undefined) document.getElementById('buildingAge').value = values.buildingAge;
@@ -298,7 +317,11 @@ function loadExampleScenario() {
         otherIncome: 0,
         occupancyRate: 95,
         rentDeclineRate: 0.5,
+        managementFeesType: 'percent',
+        managementFeesPercent: 5,
         managementFees: 120000,
+        repairAdvertisingType: 'percent',
+        repairAdvertisingPercent: 4,
         repairAdvertising: 100000,
         runningCosts: 15000,
         insurance: 30000,

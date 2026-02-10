@@ -172,11 +172,23 @@ function performCalculation(inputs) {
         // Depreciation (only during depreciation period)
         const depreciation = year <= depreciationPeriod ? annualDepreciation : 0;
         
+        // Calculate management fees and repair/advertising based on type
+        let yearlyManagementFees = managementFees;
+        let yearlyRepairAdvertising = repairAdvertising;
+        
+        if (inputs.managementFeesType === 'percent' && inputs.managementFeesPercent !== undefined) {
+            yearlyManagementFees = currentAnnualRent * (inputs.managementFeesPercent / 100);
+        }
+        
+        if (inputs.repairAdvertisingType === 'percent' && inputs.repairAdvertisingPercent !== undefined) {
+            yearlyRepairAdvertising = currentAnnualRent * (inputs.repairAdvertisingPercent / 100);
+        }
+        
         // Expenses
         const yearlyRunningCosts = runningCosts * 12;
         const yearlyClosingCosts = year === 1 ? closingCosts : 0;
         
-        const totalExpenses = managementFees + repairAdvertising + yearlyRunningCosts + 
+        const totalExpenses = yearlyManagementFees + yearlyRepairAdvertising + yearlyRunningCosts + 
                              insurance + propertyTax + yearlyClosingCosts + 
                              loanPayment.interest + depreciation;
         
@@ -199,8 +211,8 @@ function performCalculation(inputs) {
             rentIncome: currentAnnualRent,
             otherIncome: otherIncome,
             totalRevenue: totalRevenue,
-            managementFees: managementFees,
-            repairAdvertising: repairAdvertising,
+            managementFees: yearlyManagementFees,
+            repairAdvertising: yearlyRepairAdvertising,
             runningCosts: yearlyRunningCosts,
             insurance: insurance,
             propertyTax: propertyTax,
@@ -219,7 +231,7 @@ function performCalculation(inputs) {
         // Cash Flow Calculation
         const yearlyRenovation = year === 1 ? initialRenovation : 0;
         
-        const cashExpenses = managementFees + repairAdvertising + yearlyRunningCosts + 
+        const cashExpenses = yearlyManagementFees + yearlyRepairAdvertising + yearlyRunningCosts + 
                             insurance + propertyTax + yearlyClosingCosts + 
                             loanPayment.principal + loanPayment.interest + 
                             yearlyRenovation + incomeTax;
@@ -233,8 +245,8 @@ function performCalculation(inputs) {
             rentIncome: currentAnnualRent,
             otherIncome: otherIncome,
             totalIncome: totalRevenue,
-            managementFees: managementFees,
-            repairAdvertising: repairAdvertising,
+            managementFees: yearlyManagementFees,
+            repairAdvertising: yearlyRepairAdvertising,
             runningCosts: yearlyRunningCosts,
             insurance: insurance,
             propertyTax: propertyTax,
@@ -352,4 +364,35 @@ function calculateDepreciation() {
     // Update readonly fields
     document.getElementById('depreciationPeriod').value = remainingPeriod;
     document.getElementById('buildingDepreciationBase').value = Math.round(annualDepreciation);
+}
+
+/**
+ * Toggle expense input type between percentage and fixed amount
+ */
+function toggleExpenseType(type) {
+    if (type === 'management') {
+        const selectValue = document.getElementById('managementFeesType').value;
+        const percentGroup = document.getElementById('managementFeesPercentGroup');
+        const fixedGroup = document.getElementById('managementFeesFixedGroup');
+        
+        if (selectValue === 'percent') {
+            percentGroup.style.display = 'grid';
+            fixedGroup.style.display = 'none';
+        } else {
+            percentGroup.style.display = 'none';
+            fixedGroup.style.display = 'grid';
+        }
+    } else if (type === 'repair') {
+        const selectValue = document.getElementById('repairAdvertisingType').value;
+        const percentGroup = document.getElementById('repairAdvertisingPercentGroup');
+        const fixedGroup = document.getElementById('repairAdvertisingFixedGroup');
+        
+        if (selectValue === 'percent') {
+            percentGroup.style.display = 'grid';
+            fixedGroup.style.display = 'none';
+        } else {
+            percentGroup.style.display = 'none';
+            fixedGroup.style.display = 'grid';
+        }
+    }
 }

@@ -103,12 +103,37 @@
             <section class="input-section">
                 <h2>費用条件 (Expense Conditions)</h2>
                 <div class="input-group">
-                    <label for="managementFees">管理費用 (Management Fees)</label>
+                    <label for="managementFeesType">管理費用 (Management Fees)</label>
+                    <select id="managementFeesType" onchange="toggleExpenseType('management')">
+                        <option value="percent">実収入の % (% of Actual Income)</option>
+                        <option value="fixed">固定額 (Fixed Amount)</option>
+                    </select>
+                </div>
+                <div class="input-group" id="managementFeesPercentGroup">
+                    <label for="managementFeesPercent">管理費率 (Management Fee Rate)</label>
+                    <input type="number" id="managementFeesPercent" value="5" step="0.1" min="0" max="100">
+                    <span class="unit">%</span>
+                </div>
+                <div class="input-group" id="managementFeesFixedGroup" style="display: none;">
+                    <label for="managementFees">管理費用 (固定額)</label>
                     <input type="number" id="managementFees" value="120000" step="1000">
                     <span class="unit">円/年</span>
                 </div>
+                
                 <div class="input-group">
-                    <label for="repairAdvertising">修繕費・広告費等 (Repair & Advertising)</label>
+                    <label for="repairAdvertisingType">修繕費・広告費等 (Repair & Advertising)</label>
+                    <select id="repairAdvertisingType" onchange="toggleExpenseType('repair')">
+                        <option value="percent">実収入の % (% of Actual Income)</option>
+                        <option value="fixed">固定額 (Fixed Amount)</option>
+                    </select>
+                </div>
+                <div class="input-group" id="repairAdvertisingPercentGroup">
+                    <label for="repairAdvertisingPercent">修繕費・広告費率 (Repair & Ad Rate)</label>
+                    <input type="number" id="repairAdvertisingPercent" value="4" step="0.1" min="0" max="100">
+                    <span class="unit">%</span>
+                </div>
+                <div class="input-group" id="repairAdvertisingFixedGroup" style="display: none;">
+                    <label for="repairAdvertising">修繕費・広告費等 (固定額)</label>
                     <input type="number" id="repairAdvertising" value="100000" step="1000">
                     <span class="unit">円/年</span>
                 </div>
