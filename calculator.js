@@ -173,15 +173,20 @@ function performCalculation(inputs) {
         const depreciation = year <= depreciationPeriod ? annualDepreciation : 0;
         
         // Calculate management fees and repair/advertising based on type
-        let yearlyManagementFees = managementFees;
-        let yearlyRepairAdvertising = repairAdvertising;
+        let yearlyManagementFees, yearlyRepairAdvertising;
         
-        if (inputs.managementFeesType === 'percent' && inputs.managementFeesPercent !== undefined) {
-            yearlyManagementFees = currentAnnualRent * (inputs.managementFeesPercent / 100);
+        if (inputs.managementFeesType === 'percent') {
+            const percent = inputs.managementFeesPercent || 5;
+            yearlyManagementFees = currentAnnualRent * (percent / 100);
+        } else {
+            yearlyManagementFees = managementFees || 0;
         }
         
-        if (inputs.repairAdvertisingType === 'percent' && inputs.repairAdvertisingPercent !== undefined) {
-            yearlyRepairAdvertising = currentAnnualRent * (inputs.repairAdvertisingPercent / 100);
+        if (inputs.repairAdvertisingType === 'percent') {
+            const percent = inputs.repairAdvertisingPercent || 4;
+            yearlyRepairAdvertising = currentAnnualRent * (percent / 100);
+        } else {
+            yearlyRepairAdvertising = repairAdvertising || 0;
         }
         
         // Expenses

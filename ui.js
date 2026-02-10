@@ -37,12 +37,20 @@ function calculate() {
 function validateInputs(inputs) {
     const errors = [];
     
-    if (inputs.propertyPrice <= 0) errors.push('物件価格は正の数である必要があります。');
+    if (!inputs.propertyPrice || inputs.propertyPrice <= 0) errors.push('物件価格は正の数である必要があります。');
     if (inputs.loanAmount < 0) errors.push('借入額は0以上である必要があります。');
     if (inputs.interestRate < 0) errors.push('金利は0以上である必要があります。');
     if (inputs.loanPeriod < 0) errors.push('借入期間は0以上である必要があります。');
     if (inputs.occupancyRate < 0 || inputs.occupancyRate > 100) errors.push('入居率は0-100の範囲である必要があります。');
     if (inputs.projectionYears < 1) errors.push('予測年数は1年以上である必要があります。');
+    
+    // Check for NaN in key fields
+    const numericFields = ['propertyPrice', 'annualRent', 'occupancyRate'];
+    numericFields.forEach(field => {
+        if (isNaN(inputs[field])) {
+            errors.push(`${field} が無効な値です。数値を入力してください。`);
+        }
+    });
     
     if (errors.length > 0) {
         alert('入力エラー:\n\n' + errors.join('\n'));
@@ -385,9 +393,12 @@ function displayCashFlowChart(cashFlows) {
         window.cashFlowChartInstance.destroy();
     }
     
-    // Prepare data
+    // Prepare data and filter out NaN values
     const years = cashFlows.map(cf => `${cf.year}年目`);
-    const cumulativeCF = cashFlows.map(cf => cf.cumulativeCashFlow);
+    const cumulativeCF = cashFlows.map(cf => {
+        const value = cf.cumulativeCashFlow;
+        return (isNaN(value) || !isFinite(value)) ? 0 : value;
+    });
     
     // Determine color based on positive/negative
     const pointColors = cumulativeCF.map(value => value >= 0 ? '#28a745' : '#dc3545');
