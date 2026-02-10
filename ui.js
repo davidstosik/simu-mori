@@ -191,7 +191,11 @@ function displayIncomeTable(statements) {
     rows.forEach(row => {
         html += `<tr class="${row.class}"><td>${row.label}</td>`;
         statements.forEach(s => {
-            html += `<td>${formatCurrency(s[row.key])}</td>`;
+            const value = s[row.key];
+            if (isNaN(value) || !isFinite(value)) {
+                console.error(`NaN in income table: year ${s.year}, field "${row.key}" (${row.label}), value:`, value);
+            }
+            html += `<td>${formatCurrency(value)}</td>`;
         });
         html += '</tr>';
     });

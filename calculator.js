@@ -9,6 +9,11 @@
  * @returns {Array} Array of yearly payment details
  */
 function calculateLoanSchedule(principal, annualRate, years, method) {
+    // Validate inputs
+    if (!principal || principal <= 0 || !years || years <= 0) {
+        return [];
+    }
+    
     const monthlyRate = annualRate / 100 / 12;
     const totalMonths = years * 12;
     const schedule = [];
@@ -144,8 +149,8 @@ function performCalculation(inputs) {
     // Calculate loan schedule
     const loanSchedule = calculateLoanSchedule(loanAmount, interestRate, loanPeriod, repaymentMethod);
     
-    // Annual depreciation
-    const annualDepreciation = calculateDepreciation(buildingDepreciationBase, depreciationPeriod);
+    // Annual depreciation (buildingDepreciationBase is already the annual amount from auto-calc)
+    const annualDepreciation = buildingDepreciationBase || 0;
     
     // Property tax
     const propertyTax = calculatePropertyTax(landValue, buildingValue);
@@ -190,8 +195,14 @@ function performCalculation(inputs) {
         }
         
         // Ensure no NaN values
-        yearlyManagementFees = isNaN(yearlyManagementFees) ? 0 : yearlyManagementFees;
-        yearlyRepairAdvertising = isNaN(yearlyRepairAdvertising) ? 0 : yearlyRepairAdvertising;
+        if (isNaN(yearlyManagementFees) || !isFinite(yearlyManagementFees)) {
+            console.error(`Year ${year}: managementFees is NaN. currentAnnualRent=${currentAnnualRent}, type=${inputs.managementFeesType}, percent=${inputs.managementFeesPercent}, fixed=${managementFees}`);
+            yearlyManagementFees = 0;
+        }
+        if (isNaN(yearlyRepairAdvertising) || !isFinite(yearlyRepairAdvertising)) {
+            console.error(`Year ${year}: repairAdvertising is NaN. currentAnnualRent=${currentAnnualRent}, type=${inputs.repairAdvertisingType}, percent=${inputs.repairAdvertisingPercent}, fixed=${repairAdvertising}`);
+            yearlyRepairAdvertising = 0;
+        }
         
         // Expenses
         const yearlyRunningCosts = runningCosts * 12;
