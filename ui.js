@@ -7,6 +7,9 @@ function calculate() {
     // Get input values
     const inputs = getInputValues();
     
+    // Debug logging
+    console.log('Input values:', inputs);
+    
     // Validate inputs
     if (!validateInputs(inputs)) {
         return;
@@ -14,6 +17,7 @@ function calculate() {
     
     // Perform calculation
     const results = performCalculation(inputs);
+    console.log('Calculation results:', results);
     
     // Store results globally for export
     window.currentResults = results;

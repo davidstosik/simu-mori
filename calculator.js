@@ -176,18 +176,22 @@ function performCalculation(inputs) {
         let yearlyManagementFees, yearlyRepairAdvertising;
         
         if (inputs.managementFeesType === 'percent') {
-            const percent = inputs.managementFeesPercent || 5;
+            const percent = parseFloat(inputs.managementFeesPercent) || 5;
             yearlyManagementFees = currentAnnualRent * (percent / 100);
         } else {
-            yearlyManagementFees = managementFees || 0;
+            yearlyManagementFees = parseFloat(managementFees) || 0;
         }
         
         if (inputs.repairAdvertisingType === 'percent') {
-            const percent = inputs.repairAdvertisingPercent || 4;
+            const percent = parseFloat(inputs.repairAdvertisingPercent) || 4;
             yearlyRepairAdvertising = currentAnnualRent * (percent / 100);
         } else {
-            yearlyRepairAdvertising = repairAdvertising || 0;
+            yearlyRepairAdvertising = parseFloat(repairAdvertising) || 0;
         }
+        
+        // Ensure no NaN values
+        yearlyManagementFees = isNaN(yearlyManagementFees) ? 0 : yearlyManagementFees;
+        yearlyRepairAdvertising = isNaN(yearlyRepairAdvertising) ? 0 : yearlyRepairAdvertising;
         
         // Expenses
         const yearlyRunningCosts = runningCosts * 12;
@@ -326,6 +330,10 @@ function performCalculation(inputs) {
  * @returns {string} Formatted string
  */
 function formatCurrency(value) {
+    if (isNaN(value) || !isFinite(value)) {
+        console.error('formatCurrency received invalid value:', value);
+        return '0';
+    }
     return new Intl.NumberFormat('ja-JP').format(Math.round(value));
 }
 
