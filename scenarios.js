@@ -24,6 +24,9 @@ function getInputValues() {
         repairAdvertising: parseFloat(document.getElementById('repairAdvertising').value),
         runningCosts: parseFloat(document.getElementById('runningCosts').value),
         insurance: parseFloat(document.getElementById('insurance').value),
+        buildingAge: parseInt(document.getElementById('buildingAge').value),
+        buildingType: parseInt(document.getElementById('buildingType').value),
+        buildingAssessedValue: parseFloat(document.getElementById('buildingAssessedValue').value),
         buildingDepreciationBase: parseFloat(document.getElementById('buildingDepreciationBase').value),
         depreciationPeriod: parseInt(document.getElementById('depreciationPeriod').value),
         landValue: parseFloat(document.getElementById('landValue').value),
@@ -54,6 +57,9 @@ function setInputValues(values) {
     document.getElementById('repairAdvertising').value = values.repairAdvertising;
     document.getElementById('runningCosts').value = values.runningCosts;
     document.getElementById('insurance').value = values.insurance;
+    if (values.buildingAge !== undefined) document.getElementById('buildingAge').value = values.buildingAge;
+    if (values.buildingType !== undefined) document.getElementById('buildingType').value = values.buildingType;
+    if (values.buildingAssessedValue !== undefined) document.getElementById('buildingAssessedValue').value = values.buildingAssessedValue;
     document.getElementById('buildingDepreciationBase').value = values.buildingDepreciationBase;
     document.getElementById('depreciationPeriod').value = values.depreciationPeriod;
     document.getElementById('landValue').value = values.landValue;
@@ -61,6 +67,11 @@ function setInputValues(values) {
     document.getElementById('taxRate').value = values.taxRate;
     document.getElementById('incomeDeduction').value = values.incomeDeduction;
     document.getElementById('projectionYears').value = values.projectionYears;
+    
+    // Recalculate depreciation if new fields exist
+    if (values.buildingAge !== undefined || values.buildingType !== undefined || values.buildingAssessedValue !== undefined) {
+        calculateDepreciation();
+    }
 }
 
 /**
@@ -291,8 +302,11 @@ function loadExampleScenario() {
         repairAdvertising: 100000,
         runningCosts: 15000,
         insurance: 30000,
-        buildingDepreciationBase: 20000000,
-        depreciationPeriod: 22,
+        buildingAge: 10,
+        buildingType: 22,
+        buildingAssessedValue: 20000000,
+        buildingDepreciationBase: 1666667,
+        depreciationPeriod: 12,
         landValue: 10000000,
         buildingValue: 18000000,
         taxRate: 20,

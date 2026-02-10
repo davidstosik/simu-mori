@@ -59,6 +59,7 @@ function validateInputs(inputs) {
 function displayResults(results) {
     displayKeyMetrics(results.metrics);
     displayPaybackAnalysis(results.metrics);
+    displayCashFlowChart(results.cashFlows);
     displayIncomeTable(results.incomeStatements);
     displayCashFlowTable(results.cashFlows);
 }
@@ -126,11 +127,14 @@ function displayPaybackAnalysis(metrics) {
         <h3>5年間回収分析 (5-Year Payback Analysis)</h3>
         <p><strong>初期投資額:</strong> ${formatCurrency(metrics.initialInvestment)} 円</p>
         <p><strong>2〜5年目の累積キャッシュフロー:</strong> ${formatCurrency(metrics.fiveYearPayback)} 円</p>
+        ${metrics.paybackYears > 0 ? `<p><strong>回収年数 (2年目C/Fベース):</strong> ${metrics.paybackYears.toFixed(1)} 年</p>` : ''}
         <div class="payback-result ${resultClass}">
             <strong>回収状況:</strong> ${resultText}
             ${metrics.fiveYearPaybackAchieved ? 
                 `<br>5年間で初期投資を回収できます。` : 
-                `<br>5年間では初期投資を完全には回収できません。不足額: ${formatCurrency(metrics.initialInvestment - metrics.fiveYearPayback)} 円`
+                (metrics.paybackYears > 0 ? 
+                    `<br>2年目の年間キャッシュフローで計算すると、初期投資の回収には約 ${metrics.paybackYears.toFixed(1)} 年かかります。` :
+                    `<br>キャッシュフローがマイナスのため、回収できません。`)
             }
         </div>
     `;
@@ -366,4 +370,115 @@ function generateCashFlowCSV() {
     });
     
     return csv;
+}
+
+/**
+ * Display cumulative cash flow chart
+ * @param {Array} cashFlows - Cash flows array
+ */
+function displayCashFlowChart(cashFlows) {
+    const canvas = document.getElementById('cashflowChart');
+    const ctx = canvas.getContext('2d');
+    
+    // Destroy existing chart if it exists
+    if (window.cashFlowChartInstance) {
+        window.cashFlowChartInstance.destroy();
+    }
+    
+    // Prepare data
+    const years = cashFlows.map(cf => `${cf.year}年目`);
+    const cumulativeCF = cashFlows.map(cf => cf.cumulativeCashFlow);
+    
+    // Determine color based on positive/negative
+    const pointColors = cumulativeCF.map(value => value >= 0 ? '#28a745' : '#dc3545');
+    
+    // Create chart
+    window.cashFlowChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: [{
+                label: '累積キャッシュフロー (円)',
+                data: cumulativeCF,
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderWidth: 3,
+                pointBackgroundColor: pointColors,
+                pointBorderColor: pointColors,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        font: {
+                            size: 14,
+                            family: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            label += new Intl.NumberFormat('ja-JP').format(context.parsed.y) + ' 円';
+                            return label;
+                        }
+                    },
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleFont: {
+                        size: 14
+                    },
+                    bodyFont: {
+                        size: 13
+                    },
+                    padding: 12
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return new Intl.NumberFormat('ja-JP', {
+                                notation: 'compact',
+                                compactDisplay: 'short'
+                            }).format(value) + '円';
+                        },
+                        font: {
+                            size: 12
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 12
+                        }
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            }
+        }
+    });
 }

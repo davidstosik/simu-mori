@@ -262,15 +262,26 @@ function performCalculation(inputs) {
     // 5-Year Payback Analysis
     let fiveYearPayback = 0;
     let fiveYearPaybackAchieved = false;
+    let paybackYears = 0;
     
-    if (projectionYears >= 5) {
-        // Sum of cash flows from year 2 to 5
-        for (let i = 1; i < 5 && i < cashFlows.length; i++) {
-            fiveYearPayback += cashFlows[i].annualNetCashFlow;
+    if (projectionYears >= 2) {
+        const initialInvestment = propertyPrice + initialRenovation + closingCosts - loanAmount;
+        
+        // Calculate payback years needed based on year 2 cash flow
+        if (cashFlows.length >= 2) {
+            const year2CashFlow = cashFlows[1].annualNetCashFlow;
+            if (year2CashFlow > 0) {
+                paybackYears = initialInvestment / year2CashFlow;
+            }
         }
         
-        const initialInvestment = propertyPrice + initialRenovation + closingCosts - loanAmount;
-        fiveYearPaybackAchieved = fiveYearPayback >= initialInvestment;
+        // Sum of cash flows from year 2 to 5
+        if (projectionYears >= 5) {
+            for (let i = 1; i < 5 && i < cashFlows.length; i++) {
+                fiveYearPayback += cashFlows[i].annualNetCashFlow;
+            }
+            fiveYearPaybackAchieved = fiveYearPayback >= initialInvestment;
+        }
     }
     
     return {
@@ -286,6 +297,7 @@ function performCalculation(inputs) {
             finalCumulativeCashFlow: cumulativeCashFlow,
             fiveYearPayback,
             fiveYearPaybackAchieved,
+            paybackYears,
             initialInvestment: propertyPrice + initialRenovation + closingCosts - loanAmount
         }
     };
@@ -308,4 +320,23 @@ function formatCurrency(value) {
  */
 function formatPercent(value, decimals = 2) {
     return value.toFixed(decimals) + '%';
+}
+
+/**
+ * Calculate depreciation period and amount based on building age and type
+ */
+function calculateDepreciation() {
+    const buildingAge = parseInt(document.getElementById('buildingAge').value) || 0;
+    const standardPeriod = parseInt(document.getElementById('buildingType').value) || 22;
+    const assessedValue = parseFloat(document.getElementById('buildingAssessedValue').value) || 0;
+    
+    // Remaining depreciation period = Standard period - Building age
+    const remainingPeriod = Math.max(0, standardPeriod - buildingAge);
+    
+    // Annual depreciation = Assessed value / Remaining period (if period > 0)
+    const annualDepreciation = remainingPeriod > 0 ? assessedValue / remainingPeriod : 0;
+    
+    // Update readonly fields
+    document.getElementById('depreciationPeriod').value = remainingPeriod;
+    document.getElementById('buildingDepreciationBase').value = Math.round(annualDepreciation);
 }

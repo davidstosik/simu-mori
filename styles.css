@@ -546,3 +546,22 @@ button {
         position: static;
     }
 }
+
+/* Chart Container */
+.chart-container {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border: 2px solid #667eea;
+}
+
+.chart-container h3 {
+    color: #667eea;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+#cashflowChart {
+    max-height: 400px;
+}

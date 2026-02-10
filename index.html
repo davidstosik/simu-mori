@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>不動産投資シミュレーター</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -127,14 +128,33 @@
             <section class="input-section">
                 <h2>減価償却条件 (Depreciation Conditions)</h2>
                 <div class="input-group">
-                    <label for="buildingDepreciationBase">建物償却価格 (Building Depreciation Base)</label>
-                    <input type="number" id="buildingDepreciationBase" value="20000000" step="100000">
+                    <label for="buildingAge">築年数 (Building Age)</label>
+                    <input type="number" id="buildingAge" value="10" step="1" min="0" onchange="calculateDepreciation()">
+                    <span class="unit">年</span>
+                </div>
+                <div class="input-group">
+                    <label for="buildingType">建物構造 (Building Type)</label>
+                    <select id="buildingType" onchange="calculateDepreciation()">
+                        <option value="22">木造 (Wooden - 22年)</option>
+                        <option value="27">軽量鉄骨 (Light Steel - 27年)</option>
+                        <option value="34">重量鉄骨 (Heavy Steel - 34年)</option>
+                        <option value="47">RC造 (Reinforced Concrete - 47年)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="buildingAssessedValue">建物の評価価格 (Building Assessed Value)</label>
+                    <input type="number" id="buildingAssessedValue" value="20000000" step="100000" onchange="calculateDepreciation()">
                     <span class="unit">円</span>
                 </div>
                 <div class="input-group">
-                    <label for="depreciationPeriod">償却年数 (Depreciation Period)</label>
-                    <input type="number" id="depreciationPeriod" value="22" step="1">
+                    <label for="depreciationPeriod">残存償却年数 (Remaining Depreciation Period)</label>
+                    <input type="number" id="depreciationPeriod" value="12" step="1" readonly style="background: #e9ecef;">
                     <span class="unit">年</span>
+                </div>
+                <div class="input-group">
+                    <label for="buildingDepreciationBase">年間減価償却費 (Annual Depreciation)</label>
+                    <input type="number" id="buildingDepreciationBase" value="20000000" step="100000" readonly style="background: #e9ecef;">
+                    <span class="unit">円</span>
                 </div>
             </section>
 
@@ -193,6 +213,12 @@
 
             <!-- 5-Year Payback Analysis -->
             <div id="paybackAnalysis" class="payback-container"></div>
+
+            <!-- Cumulative Cash Flow Chart -->
+            <div class="chart-container">
+                <h3>累積キャッシュフロー推移 (Cumulative Cash Flow)</h3>
+                <canvas id="cashflowChart"></canvas>
+            </div>
 
             <!-- Income Statement Table -->
             <div class="table-container">
